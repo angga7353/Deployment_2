@@ -20,7 +20,7 @@ label_map = {
 
 def app():
     st.title("AI SEE YOU")
-    st.image("LOGO_AISEE_YOU.png", use_column_width=224)
+    st.image("LOGO_AISEE_YOU.png")
 
     file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
     if file is not None:
