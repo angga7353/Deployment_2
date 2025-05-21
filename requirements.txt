@@ -1,11 +1,7 @@
 streamlit
 altair
 pandas
-numpy
+numpy==1.23.5
 Pillow
-
-# Install ultralytics terlebih dahulu
 ultralytics
-
-# Setelah ultralytics, force install opencv-python-headless versi kompatibel
 opencv-python-headless==4.7.0.72
