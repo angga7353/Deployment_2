@@ -20,20 +20,8 @@ label_map = {
 
 def app():
     # st.title("AI SEE YOU")
-    # st.page_config(page_title="AI SEE YOU", page_icon="🔍", layout="centered")
-    st.image("LOGO_AISEE_YOU.png", width = 150, layout="centered")
-    # st.markdown(
-    #     """
-    #     <style>
-    #     .stApp {
-    #         background-image: url("https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0");
-    #         background-size: cover;
-    #         background-position: center;
-    #     }
-    #     </style>
-    #     """,
-    #     unsafe_allow_html=True,
-    # )
+    st.page_config(page_title="AI SEE YOU", page_icon="🔍", layout="centered")
+    st.image("LOGO_AISEE_YOU.png", width = 150)
     st.title("AI SEE YOU")
 
     file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
