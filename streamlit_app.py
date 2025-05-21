@@ -19,8 +19,10 @@ label_map = {
 }
 
 def app():
+    # st.title("AI SEE YOU")
+    st.page_config(page_title="AI SEE YOU", page_icon=":guardsman:", layout="wide")
+    st.image("LOGO_AISEE_YOU.png", width = 150)
     st.title("AI SEE YOU")
-    st.image("LOGO_AISEE_YOU.png")
 
     file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
     if file is not None:
