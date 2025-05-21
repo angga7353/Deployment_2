@@ -26,7 +26,7 @@ def app():
     file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
     if file is not None:
         img = Image.open(file).convert("RGB")
-        st.image(img, caption="Uploaded Image", use_column_width=True)
+        st.image(img, caption="Uploaded Image")
         
         results = model.predict(source=img, conf=0.25, save=False)
         
