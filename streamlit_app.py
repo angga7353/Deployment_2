@@ -20,6 +20,7 @@ label_map = {
 
 def app():
     st.title("AI SEE YOU")
+    st.image("https://i.imgur.com/2c3v1g4.png", use_column_width=True)
 
     file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
     if file is not None:
@@ -31,10 +32,7 @@ def app():
         if results:
             st.write("Results:")
             for result in results:
-                # st.write(f"Boxes: {result.boxes}")
                 if result.boxes.cls.numel() > 0:
-                    # st.write(f"Boxes (xyxy): {result.boxes.xyxy}")
-                    # st.write(f"CLS (xywh): {result.boxes.cls[0]}")
 
                     fig, ax = plt.subplots()
                     ax.imshow(img)
