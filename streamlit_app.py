@@ -40,7 +40,6 @@ def show_prediction(img):
 
 def app():
     st.title("AI SEE YOU")
-    st.title('🔍 Waste Classification Prediction')
 
     # Example images
     example_images = ['test1.jpg', 'test2.jpg', 'test3.jpg', 'test4.jpg',
