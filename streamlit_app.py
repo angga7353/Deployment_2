@@ -1,86 +1,116 @@
 import streamlit as st
-from ultralytics import YOLO
-from PIL import Image
-import numpy as np
-import os
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
+import prediction
+# import eda  # Uncomment if you have eda.py
 
-model = YOLO("best.pt")
+# Set page configuration
+st.set_page_config(
+    page_title="AISeeYou",
+    page_icon="LOGO_AISEE_YOU.PNG",  # Menggunakan logo sebagai icon tab
+    layout="wide",  # Centered layout
+    initial_sidebar_state="expanded"
+)
 
-label_map = {
-    0: "scissors",
-    1: "unidentified",
-    2: "knife",
-    3: "cutter",
-    4: "swiss knife",
-}
+# Inisialisasi session state untuk fun fact
+if 'fun_fact_index' not in st.session_state:
+    st.session_state['fun_fact_index'] = 0
 
-def show_prediction(img):
-    results = model.predict(source=img, conf=0.25, save=False)
+def main():
+    # Sidebar
+    st.sidebar.image("LOGO_AISEE_YOU.PNG", width=150)
+    st.sidebar.title("Navigation")
+    page = st.sidebar.radio("Go to", ["🏠 Home", "🔍 Prediction"])
 
-    if results:
-        st.write("Results:")
-        for result in results:
-            if result.boxes.cls.numel() > 0:
-                fig, ax = plt.subplots()
-                ax.imshow(img)
+    if page == "🏠 Home":
+        # Sidebar Info
+        # st.sidebar.markdown("---")
+        # st.sidebar.subheader("📊 About the Model")
+        # accuracy = 0.82
+        # st.sidebar.write("🎯 Model Accuracy:")
+        # st.sidebar.progress(accuracy)
+        # st.sidebar.write(f"{accuracy:.2%}")
+        # st.sidebar.write("**🤔 What is Accuracy?**")
+        # st.sidebar.write("Accuracy measures how well our model correctly classifies waste items.")
+        # st.sidebar.write("**💡 What does this mean?**")
+        # st.sidebar.write(f"Our model correctly classifies {accuracy:.2%} of waste items, helping improve recycling efficiency.")
 
-                x1, y1, x2, y2 = result.boxes.xyxy[0]
-                rect = patches.Rectangle((x1, y1), x2 - x1, y2 - y1,
-                                         linewidth=1, edgecolor="r", facecolor="none")
-                ax.add_patch(rect)
+        # st.sidebar.markdown("---")
+        # st.sidebar.subheader("♻️ Fun Facts")
+        # fun_facts = [
+        #     "Proper waste classification can increase recycling rates by up to 50%!",
+        #     "Recycling one aluminum can saves enough energy to run a TV for three hours.",
+        #     "It takes 450 years for a plastic bottle to decompose in a landfill.",
+        #     "Glass can be recycled endlessly without losing quality or purity.",
+        #     "Recycling paper saves 17 trees and 7,000 gallons of water per ton of paper."
+        # ]
+        # st.sidebar.info(fun_facts[st.session_state['fun_fact_index']])
 
-                ax.text(x1, y1, f"{label_map[int(result.boxes.cls[0])]} {result.boxes.conf[0]:.2f}",
-                        fontsize=12, color="white", bbox=dict(facecolor="red", alpha=0.5))
-                ax.axis("off")
-                st.pyplot(fig)
-            else:
-                st.write("No objects detected.")
+        # if st.sidebar.button("Next Fun Fact"):
+        #     st.session_state['fun_fact_index'] = (st.session_state['fun_fact_index'] + 1) % len(fun_facts)
+        #     st.rerun()
 
-def app():
-    st.title("AI SEE YOU")
+        # Main Content - Home
+        st.title("Welcome to AI See You Tools")
+        st.write("""
+        This application provides functionalities for Exploratory Data Analysis and 
+        Prediction of waste types. Use the navigation pane on the left to 
+        select the module you wish to utilize.
+        """)
 
-    # Example images
-    example_images = ['test1.jpg', 'test2.jpg', 'test3.jpg', 'test4.jpg',
-                      'test5.jpg', 'test6.jpg', 'test7.jpg', 'test8.jpg']
-    example_path = './visualization'
+        # Logo di tengah halaman
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            st.image("LOGO_AISEE_YOU.PNG", caption="AISeeYou", width=300)
 
-    st.subheader("Choose an example image or upload your own:")
+        st.markdown("---")
 
-    if 'selected_image_path' not in st.session_state:
-        st.session_state.selected_image_path = None
-        st.session_state.uploaded_image = None
+        # Dataset Info
+        st.write("#### 📊 Dataset")
+        st.info("""
+        The dataset used is the RealWaste dataset, containing images of waste items across 9 major material types, 
+        collected within an authentic landfill environment. This dataset provides a realistic representation of 
+        waste items, allowing our model to learn from real-world examples.
+        """)
 
-    # Display example images
-    cols = st.columns(4)
-    for i, img_name in enumerate(example_images):
-        with cols[i % 4]:
-            img_path = os.path.join(example_path, img_name)
-            st.image(img_path, width=100, caption=f'Example {i+1}')
-            if st.button(f"Example {i+1}", key=f"example_{i}"):
-                st.session_state.selected_image_path = img_path
-                st.session_state.uploaded_image = None  # Reset uploaded image
+        # Problem Statement
+        st.write("#### ⚠️ Problem Statement")
+        st.warning("""
+        Dalam upaya menjaga keselamatan dan keamanan publik, khususnya di tempat-tempat vital seperti bandara,
+        terminal, dan gedung pemerintahan, pemeriksaan barang bawaan menjadi langkah penting yang tidak 
+        bisa diabaikan. Salah satu metode utama yang digunakan adalah pemindaian X-ray terhadap bagasi 
+        atau tas penumpang untuk mendeteksi adanya benda-benda berbahaya seperti senjata api, pisau, atau alat tajam lainnya.
+        Meskipun teknologi pemindaian X-ray telah tersedia secara luas, proses interpretasi citra X-ray masih sangat bergantung 
+        pada keahlian manusia, yang memiliki keterbatasan dalam hal konsistensi, kecepatan, dan akurasi, terutama ketika 
+        menghadapi volume penumpang yang tinggi. Dalam konteks ini, penerapan Artificial Intelligence (AI) dan 
+        Computer Vision dapat menjadi solusi potensial untuk meningkatkan efektivitas sistem keamanan.
+        """)
 
-    # File uploader
-    file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
-    if file is not None:
-        st.session_state.uploaded_image = file
-        st.session_state.selected_image_path = None  # Reset example image
+        # Objective
+        st.write("#### 🎯 Objective")
+        st.success("""
+        Proyek ini bertujuan untuk secara komprehensif mengeksplorasi dan menganalisis 
+        dataset citra X-ray bagasi yang berisi gambar-gambar hasil pemindaian 
+        serta anotasi objek-objek berbahaya seperti senjata tajam, bahan peledak, 
+        dan benda mencurigakan lainnya dengan metrics yang ditentukan adalah recall dan mAP50 mencapai 80%. Tujuan utama dari proyek ini mencakup beberapa 
+        tahap penting yang saling terkait, yakni:
+                   
+        1. Eksplorasi dan Pemahaman Dataset.
+        2. Analisis Distribusi dan Karakteristik Visual.
+        3. Analisis Visual Interaktif.
+        4. Pengembangan dan Pelatihan Model Deep Learning.
+        5. Evaluasi Performa Model.
+        6. Interpretasi dan Implikasi Praktis.
+                   
+        Dengan pendekatan yang sistematis ini, proyek diharapkan mampu menghasilkan pemahaman
+        yang mendalam terhadap data serta mengembangkan early prototype model yang dapat mendeteksi
+        objek berbahaya. Prototipe ini diharapkan dapat menjadi langkah awal dalam kontribusi
+        terhadap sistem keamanan publik yang lebih canggih dan responsif.
+        """)
 
-    image = None
+    elif page == "🔍 Prediction":
+        prediction.run()
 
-    if st.session_state.uploaded_image:
-        image = Image.open(st.session_state.uploaded_image).convert("RGB")
-        st.subheader("Uploaded Image")
-        st.image(image, caption="Uploaded Image")
-        show_prediction(image)
-
-    elif st.session_state.selected_image_path:
-        image = Image.open(st.session_state.selected_image_path).convert("RGB")
-        st.subheader("Selected Example Image")
-        st.image(image, caption="Selected Example Image")
-        show_prediction(image)
+    # elif page == "📊 EDA":
+    #     eda.run()
 
 if __name__ == "__main__":
-    app()
+    main()
